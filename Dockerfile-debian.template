@@ -16,12 +16,10 @@ RUN set -ex; \
 		make \
 		python \
 		unzip \
-	;
-
-RUN set -ex; \
+	; \
 	# create node group / user
 	groupadd --gid 1000 node; \
-	useradd --uid 1000 --gid node --shell /bin/bash --create-home node;
+	useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
 RUN set -ex; \
 	# gpg keys listed at https://github.com/nodejs/node#release-team
@@ -59,11 +57,6 @@ RUN set -ex; \
 	&& tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
 	&& rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
 	&& ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-RUN set -ex; \
-	# Set the JAVA_HOME system environment variable
-	#export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p')
-	echo $JAVA_HOME
 
 RUN set -ex; \
 	# download and extract android sdk

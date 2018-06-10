@@ -21,10 +21,11 @@ RUN set -ex; \
 RUN set -ex; \
 	# download and extract android sdk
 	#curl https://dl.google.com/android/android-sdk_r$ANDROID_VERSION-linux.tgz | tar xz -C /usr/local/ ; \
-	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o sdk.zip; \
-	unzip sdk.zip -d /usr/local/ ; \
-	rm -f sdk.zip; \
-	export ANDROID_HOME='/usr/local/android-sdk-linux'; \
+	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
+	unzip android-sdk.zip -d /usr/local/ ; \
+	rm -f android-sdk.zip; \
+	export ANDROID_HOME='/usr/local/android-sdk'; \
+	ls /usr/local; \
 	ls $ANDROID_HOME; \
 	ls $ANDROID_HOME/tools; \
 	ls $ANDROID_HOME/tools/bin; \

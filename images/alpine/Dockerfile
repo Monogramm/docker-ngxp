@@ -21,26 +21,6 @@ RUN set -ex; \
 	;
 
 RUN set -ex; \
-	# download and extract android sdk
-	#curl https://dl.google.com/android/android-sdk_r$ANDROID_VERSION-linux.tgz | tar xz -C /usr/local/ ; \
-	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
-	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
-	rm -f android-sdk.zip; \
-	export ANDROID_HOME='/usr/local/android-sdk'; \
-	ls /usr/local; \
-	ls $ANDROID_HOME; \
-	ls $ANDROID_HOME/tools; \
-	ls $ANDROID_HOME/tools/bin; \
-	$ANDROID_HOME/tools/bin/sdkmanager \
-		"tools" \
-		"platform-tools" \
-		"platforms;android-25" \
-		"build-tools;27.0.3" \
-		"extras;android;m2repository" \
-		"extras;google;m2repository"\
-	;
-
-RUN set -ex; \
 	# create node group / user
 	addgroup -g 1000 node; \
 	adduser -u 1000 -G node -s /bin/sh -D node;
@@ -81,6 +61,8 @@ RUN set -ex; \
 	# Set the JAVA_HOME system environment variable
 	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p')
 
+#ENV JAVA_HOME /usr/local/android-sdk-linux
+
 RUN set -ex; \
 	# Install the NativeScript and Angular CLI
 	npm install -g --unsafe-perm \
@@ -89,8 +71,22 @@ RUN set -ex; \
 	; \
     apk del .build-deps
 
-#ENV JAVA_HOME /usr/local/android-sdk-linux
-#ENV ANDROID_HOME /usr/local/android-sdk-linux
+RUN set -ex; \
+	# download and extract android sdk
+	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
+	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
+	rm -f android-sdk.zip; \
+	export ANDROID_HOME='/usr/local/android-sdk'; \
+	$ANDROID_HOME/tools/bin/sdkmanager \
+		"tools" \
+		"platform-tools" \
+		"platforms;android-25" \
+		"build-tools;27.0.3" \
+		"extras;android;m2repository" \
+		"extras;google;m2repository"\
+	;
+
+ENV ANDROID_HOME /usr/local/android-sdk
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
 ENV GRADLE_USER_HOME /src/gradle
@@ -100,4 +96,5 @@ WORKDIR /src
 # Verify install
 RUN set -ex; \
 	ng --version; \
+	tns info; \
 	tns doctor

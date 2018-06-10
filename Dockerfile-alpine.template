@@ -68,7 +68,6 @@ RUN set -ex; \
 	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
 	rm -f android-sdk.zip; \
 	export ANDROID_HOME='/usr/local/android-sdk'; \
-	$ANDROID_HOME/tools/bin/sdkmanager --update; \
 	$ANDROID_HOME/tools/bin/sdkmanager \
 		"tools" \
 		"platform-tools" \
@@ -81,6 +80,8 @@ RUN set -ex; \
 ENV ANDROID_HOME /usr/local/android-sdk
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
 
+RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --no-ui -a --filter platform-tool,build-tools-27.0.3,android-25
+
 RUN set -ex; \
 	# Install the NativeScript and Angular CLI
 	npm install -g --unsafe-perm \
@@ -90,6 +91,8 @@ RUN set -ex; \
 	tns setup; \
     apk del .build-deps
 
+#RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | tns setup
+
 ENV GRADLE_USER_HOME /src/gradle
 VOLUME /src
 WORKDIR /src
@@ -97,6 +100,7 @@ WORKDIR /src
 # Verify install
 RUN set -ex; \
 	sdkmanager --version; \
+	node --version; \
+	npm --version; \
 	ng --version; \
-	tns info; \
-	tns doctor
+	tns info

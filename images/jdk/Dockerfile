@@ -13,8 +13,6 @@ RUN set -ex; \
 		g++ \
 		gcc \
         gnupg \
-        libgcc \
-        linux-headers \
 		make \
 		python \
 	;

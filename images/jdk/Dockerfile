@@ -17,7 +17,6 @@ RUN set -ex; \
         linux-headers \
 		make \
 		python \
-		unzip \
 	;
 
 RUN set -ex; \

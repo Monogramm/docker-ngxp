@@ -13,16 +13,16 @@ RUN set -ex; \
 		gcc \
         gnupg \
         libgcc \
+		libstdc++ \
         linux-headers \
 		make \
 		python \
-		unzip \
 	;
 
 RUN set -ex; \
 	# create node group / user
-	groupadd --gid 1000 node; \
-	useradd --uid 1000 --gid node --shell /bin/bash --create-home node;
+	addgroup -g 1000 node; \
+	adduser -u 1000 -G node -s /bin/sh -D node;
 
 RUN set -ex; \
 	# gpg keys listed at https://github.com/nodejs/node#release-team

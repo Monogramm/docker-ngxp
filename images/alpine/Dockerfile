@@ -52,15 +52,13 @@ RUN set -ex; \
     ./configure; \
     make -j$(getconf _NPROCESSORS_ONLN); \
     make install; \
-    apk del .build-deps; \
     cd .. ; \
     rm -Rf "node-v$NODE_VERSION"; \
     rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
 RUN set -ex; \
 	# Set the JAVA_HOME system environment variable
-	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p'); \
-	;
+	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p')
 
 RUN set -ex; \
 	# download and extract android sdk
@@ -76,8 +74,12 @@ RUN set -ex; \
 	;
 
 RUN set -ex; \
-	# Install the NativeScript CLI
-	npm install nativescript @angular/cli -g --unsafe-perm
+	# Install the NativeScript and Angular CLI
+	npm install -g --unsafe-perm \
+		nativescript \
+		@angular/cli \
+	; \
+    apk del .build-deps
 
 #ENV JAVA_HOME /usr/local/android-sdk-linux
 #ENV ANDROID_HOME /usr/local/android-sdk-linux

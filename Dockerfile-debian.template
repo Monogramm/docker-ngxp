@@ -61,9 +61,7 @@ RUN set -ex; \
 
 RUN set -ex; \
 	# Set the JAVA_HOME system environment variable
-	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p') ; \
-	; \
-	rm -rf /var/lib/apt/lists/*
+	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p')
 
 RUN set -ex; \
 	# download and extract android sdk
@@ -79,8 +77,12 @@ RUN set -ex; \
 	;
 
 RUN set -ex; \
-	# Install the NativeScript CLI
-	npm install nativescript @angular/cli -g --unsafe-perm
+	# Install the NativeScript and Angular CLI
+	npm install -g --unsafe-perm \
+		nativescript \
+		@angular/cli \
+	; \
+	rm -rf /var/lib/apt/lists/*
 
 #ENV JAVA_HOME /usr/local/android-sdk-linux
 #ENV ANDROID_HOME /usr/local/android-sdk-linux

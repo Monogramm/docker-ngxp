@@ -13,17 +13,20 @@ RUN set -ex; \
 		gcc \
         gnupg \
         libgcc \
+		libstdc++ \
         linux-headers \
-		lib32z1 \
-		lib32ncurses5 \
-		lib32bz2-1.0 \
-		libstdc++6:i386 \
 		make \
 		python \
 		unzip \
 	;
 
 RUN set -ex; \
+	# create node group / user
+	addgroup -g 1000 node; \
+	adduser -u 1000 -G node -s /bin/sh -D node;
+
+RUN set -ex; \
+	# gpg keys listed at https://github.com/nodejs/node#release-team
 	for key in \
 		94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
 		FD3A5288F042B6850C66B31F09FE44734EB7990E \
@@ -37,7 +40,9 @@ RUN set -ex; \
 		gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
 		gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
 		gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
-	done \
+	done
+
+RUN set -ex; \
 	# Install the latest Node.js stable official release
     curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz"; \
     curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"; \
@@ -48,20 +53,21 @@ RUN set -ex; \
     ./configure; \
     make -j$(getconf _NPROCESSORS_ONLN); \
     make install; \
-    apk del .build-deps; \
     cd .. ; \
     rm -Rf "node-v$NODE_VERSION"; \
     rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
 RUN set -ex; \
 	# Set the JAVA_HOME system environment variable
-	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p'); \
-	;
+	#export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p')
+	echo $JAVA_HOME
 
 RUN set -ex; \
 	# download and extract android sdk
-	curl https://dl.google.com/android/android-sdk_r$ANDROID_VERSION-linux.tgz | tar xz -C /usr/local/ ; \
-	export ANDROID_HOME='/usr/local/android-sdk-linux'; \
+	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
+	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
+	rm -f android-sdk.zip; \
+	export ANDROID_HOME='/usr/local/android-sdk'; \
 	$ANDROID_HOME/tools/bin/sdkmanager \
 		"tools" \
 		"platform-tools" \
@@ -71,13 +77,21 @@ RUN set -ex; \
 		"extras;google;m2repository"\
 	;
 
-RUN set -ex; \
-	# Install the NativeScript CLI
-	npm install nativescript @angular/cli -g --unsafe-perm
+ENV ANDROID_HOME /usr/local/android-sdk
+ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
 
-#ENV JAVA_HOME /usr/local/android-sdk-linux
-#ENV ANDROID_HOME /usr/local/android-sdk-linux
-ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --no-ui -a --filter platform-tool,build-tools-27.0.3,android-25
+
+RUN set -ex; \
+	# Install the NativeScript and Angular CLI
+	npm install -g --unsafe-perm \
+		nativescript \
+		@angular/cli \
+	; \
+	tns setup; \
+    apk del .build-deps
+
+#RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | tns setup
 
 ENV GRADLE_USER_HOME /src/gradle
 VOLUME /src
@@ -85,5 +99,8 @@ WORKDIR /src
 
 # Verify install
 RUN set -ex; \
+	sdkmanager --version; \
+	node --version; \
+	npm --version; \
 	ng --version; \
-	tns doctor
+	tns info

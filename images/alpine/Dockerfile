@@ -24,7 +24,7 @@ RUN set -ex; \
 	# download and extract android sdk
 	#curl https://dl.google.com/android/android-sdk_r$ANDROID_VERSION-linux.tgz | tar xz -C /usr/local/ ; \
 	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
-	unzip android-sdk.zip -d /usr/local/ ; \
+	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
 	rm -f android-sdk.zip; \
 	export ANDROID_HOME='/usr/local/android-sdk'; \
 	ls /usr/local; \

@@ -21,8 +21,11 @@ RUN set -ex; \
 	;
 
 RUN set -ex; \
+	# create node group / user
 	groupadd --gid 1000 node; \
-	useradd --uid 1000 --gid node --shell /bin/bash --create-home node; \
+	useradd --uid 1000 --gid node --shell /bin/bash --create-home node;
+
+RUN set -ex; \
 	# gpg keys listed at https://github.com/nodejs/node#release-team
 	for key in \
 		94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
@@ -37,7 +40,9 @@ RUN set -ex; \
 		gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
 		gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
 		gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
-	done \
+	done
+
+RUN set -ex; \
 	# Install the latest Node.js stable official release
 	ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 	&& case "${dpkgArch##*-}" in \

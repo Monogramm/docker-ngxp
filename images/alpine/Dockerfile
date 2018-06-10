@@ -59,17 +59,8 @@ RUN set -ex; \
 
 RUN set -ex; \
 	# Set the JAVA_HOME system environment variable
-	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p')
-
-#ENV JAVA_HOME /usr/local/android-sdk-linux
-
-RUN set -ex; \
-	# Install the NativeScript and Angular CLI
-	npm install -g --unsafe-perm \
-		nativescript \
-		@angular/cli \
-	; \
-    apk del .build-deps
+	#export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p')
+	echo $JAVA_HOME
 
 RUN set -ex; \
 	# download and extract android sdk
@@ -77,6 +68,7 @@ RUN set -ex; \
 	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
 	rm -f android-sdk.zip; \
 	export ANDROID_HOME='/usr/local/android-sdk'; \
+	$ANDROID_HOME/tools/bin/sdkmanager --update; \
 	$ANDROID_HOME/tools/bin/sdkmanager \
 		"tools" \
 		"platform-tools" \
@@ -89,12 +81,22 @@ RUN set -ex; \
 ENV ANDROID_HOME /usr/local/android-sdk
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
+RUN set -ex; \
+	# Install the NativeScript and Angular CLI
+	npm install -g --unsafe-perm \
+		nativescript \
+		@angular/cli \
+	; \
+	tns setup; \
+    apk del .build-deps
+
 ENV GRADLE_USER_HOME /src/gradle
 VOLUME /src
 WORKDIR /src
 
 # Verify install
 RUN set -ex; \
+	sdkmanager --version; \
 	ng --version; \
 	tns info; \
 	tns doctor

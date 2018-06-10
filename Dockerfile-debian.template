@@ -83,7 +83,7 @@ RUN set -ex; \
 ENV ANDROID_HOME /usr/local/android-sdk
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
 
-RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager -a --filter platform-tool,build-tools-27.0.3,android-25
+RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager -a
 
 RUN set -ex; \
 	# Install the NativeScript and Angular CLI

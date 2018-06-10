@@ -6,21 +6,21 @@ ENV NODE_VERSION 8.11.2
 ENV ANDROID_VERSION 24.4.1
 
 RUN set -ex; \
+	apt-get update -q; \
 	# Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 	apt-get install -y --no-install-recommends \
 		curl \
 		g++ \
-		lib32z1 \
-		lib32ncurses5 \
-		lib32bz2-1.0 \
-		libstdc++6:i386 \
+		gcc \
+        gnupg \
+        libgcc \
+        linux-headers \
 		make \
 		python \
 		unzip \
 	;
 
 RUN set -ex; \
-	apt-get update -q; \
 	groupadd --gid 1000 node; \
 	useradd --uid 1000 --gid node --shell /bin/bash --create-home node; \
 	# gpg keys listed at https://github.com/nodejs/node#release-team

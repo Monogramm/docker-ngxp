@@ -10,7 +10,9 @@ RUN set -ex; \
 	curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash -; \
 	apk add --no-cache \
 		nodejs \
-	; \
+	;
+
+RUN set -ex; \
 	# Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 	apk add --no-cache \
 		g++ \
@@ -20,10 +22,14 @@ RUN set -ex; \
 		libstdc++6:i386 \
 		unzip \
 	; \
-	apk del .build-deps; \
+	apk del .build-deps;
+
+RUN set -ex; \
 	# Set the JAVA_HOME system environment variable
 	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p'); \
-	; \
+	;
+
+RUN set -ex; \
 	# download and extract android sdk
 	curl https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip | unzip /usr/local/; \
 	export ANDROID_HOME='/usr/local/android-sdk-linux'; \
@@ -34,7 +40,9 @@ RUN set -ex; \
 		"build-tools;27.0.3" \
 		"extras;android;m2repository" \
 		"extras;google;m2repository"\
-	; \
+	;
+
+RUN set -ex; \
 	# Install the NativeScript CLI
 	npm install nativescript @angular/cli -g --unsafe-perm
 

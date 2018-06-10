@@ -8,10 +8,12 @@ ENV ANDROID_VERSION %%ANDROID_VERSION%%
 RUN set -ex; \
 	apt-get update -q; \
 	# Install the latest Node.js 8.x stable official release
-	curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash -; \
+	curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash - ; \
 	apt-get install -y --no-install-recommends \
 		nodejs \
-	; \
+	;
+
+RUN set -ex; \
 	# Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 	apt-get install -y --no-install-recommends \
 		g++ \
@@ -21,13 +23,17 @@ RUN set -ex; \
 		libstdc++6:i386 \
 		unzip \
 	; \
-	rm -rf /var/lib/apt/lists/*; \
+	rm -rf /var/lib/apt/lists/*;
+
+RUN set -ex; \
 	# Set the JAVA_HOME system environment variable
-	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p'); \
-	; \
+	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p') ; \
+	;
+
+RUN set -ex; \
 	# download and extract android sdk
-	curl https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip | unzip /usr/local/; \
-	export ANDROID_HOME='/usr/local/android-sdk-linux'; \
+	curl https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip | unzip /usr/local/ ; \
+	export ANDROID_HOME='/usr/local/android-sdk-linux' ; \
 	$ANDROID_HOME/tools/bin/sdkmanager \
 		"tools" \
 		"platform-tools" \
@@ -35,7 +41,9 @@ RUN set -ex; \
 		"build-tools;27.0.3" \
 		"extras;android;m2repository" \
 		"extras;google;m2repository"\
-	; \
+	;
+
+RUN set -ex; \
 	# Install the NativeScript CLI
 	npm install nativescript @angular/cli -g --unsafe-perm
 

@@ -8,7 +8,7 @@ ENV ANDROID_VERSION %%ANDROID_VERSION%%
 RUN set -ex; \
 	apt-get update -q; \
 	# Install the latest Node.js 8.x stable official release
-	curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash - ; \
+	curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - ; \
 	apt-get install -y --no-install-recommends \
 		nodejs \
 	;

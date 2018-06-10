@@ -11,6 +11,9 @@ variants=(
 	alpine
 )
 
+nodeVersion=8.11.2
+androidVersion=24.4.1
+
 dockerRepo="monogramm/docker-ngxp"
 
 # Remove existing images
@@ -32,6 +35,8 @@ for variant in "${variants[@]}"; do
 
 	# Replace the variables.
 	sed -ri -e '
+		s/%%NODE_VERSION%%/'"$nodeVersion"'/g;
+		s/%%ANDROID_VERSION%%/'"$androidVersion"'/g;
 		s/%%VARIANT%%/'"$variant"'/g;
 	' "$dir/Dockerfile"
 

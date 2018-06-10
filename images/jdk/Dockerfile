@@ -3,7 +3,7 @@ FROM openjdk:jdk
 LABEL maintainer="mathieu.brunot at monogramm"
 
 ENV NODE_VERSION 8.11.2
-ENV ANDROID_VERSION 24.4.1
+ENV ANDROID_VERSION 4333796
 
 RUN set -ex; \
 	apt-get update -q; \
@@ -15,6 +15,24 @@ RUN set -ex; \
         gnupg \
 		make \
 		python \
+		unzip \
+	;
+
+RUN set -ex; \
+	# download and extract android sdk
+	#curl https://dl.google.com/android/android-sdk_r$ANDROID_VERSION-linux.tgz | tar xz -C /usr/local/ ; \
+	curl https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip | unzip -d /usr/local/ ; \
+	export ANDROID_HOME='/usr/local/android-sdk-linux'; \
+	ls $ANDROID_HOME; \
+	ls $ANDROID_HOME/tools; \
+	ls $ANDROID_HOME/tools/bin; \
+	$ANDROID_HOME/tools/bin/sdkmanager \
+		"tools" \
+		"platform-tools" \
+		"platforms;android-25" \
+		"build-tools;27.0.3" \
+		"extras;android;m2repository" \
+		"extras;google;m2repository"\
 	;
 
 RUN set -ex; \
@@ -62,19 +80,6 @@ RUN set -ex; \
 RUN set -ex; \
 	# Set the JAVA_HOME system environment variable
 	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e 's/Best: *\(.*\)\/bin\/javac/\1/p')
-
-RUN set -ex; \
-	# download and extract android sdk
-	curl https://dl.google.com/android/android-sdk_r$ANDROID_VERSION-linux.tgz | tar xz -C /usr/local/ ; \
-	export ANDROID_HOME='/usr/local/android-sdk-linux' ; \
-	$ANDROID_HOME/tools/bin/sdkmanager \
-		"tools" \
-		"platform-tools" \
-		"platforms;android-25" \
-		"build-tools;27.0.3" \
-		"extras;android;m2repository" \
-		"extras;google;m2repository"\
-	;
 
 RUN set -ex; \
 	# Install the NativeScript and Angular CLI

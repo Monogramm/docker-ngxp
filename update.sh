@@ -12,7 +12,7 @@ variants=(
 )
 
 nodeVersion=8.11.2
-androidVersion=24.4.1
+androidVersion=4333796
 
 dockerRepo="monogramm/docker-ngxp"
 

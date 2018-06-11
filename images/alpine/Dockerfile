@@ -24,6 +24,24 @@ RUN set -ex; \
 	adduser -u 1000 -G node -s /bin/sh -D node
 
 RUN set -ex; \
+	# download and extract android sdk
+	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
+	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
+	rm -f android-sdk.zip; \
+	export ANDROID_HOME='/usr/local/android-sdk'; \
+	$ANDROID_HOME/tools/bin/sdkmanager \
+		"tools" \
+		"platform-tools" \
+		"platforms;android-25" \
+		"build-tools;27.0.3" \
+		"extras;android;m2repository" \
+		"extras;google;m2repository"\
+	;
+
+ENV ANDROID_HOME /usr/local/android-sdk
+ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
+
+RUN set -ex; \
 	# gpg keys listed at https://github.com/nodejs/node#release-team
 	for key in \
 		94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
@@ -54,24 +72,6 @@ RUN set -ex; \
     cd .. ; \
     rm -Rf "node-v$NODE_VERSION"; \
     rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
-
-RUN set -ex; \
-	# download and extract android sdk
-	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
-	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
-	rm -f android-sdk.zip; \
-	export ANDROID_HOME='/usr/local/android-sdk'; \
-	$ANDROID_HOME/tools/bin/sdkmanager \
-		"tools" \
-		"platform-tools" \
-		"platforms;android-25" \
-		"build-tools;27.0.3" \
-		"extras;android;m2repository" \
-		"extras;google;m2repository"\
-	;
-
-ENV ANDROID_HOME /usr/local/android-sdk
-ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
 
 RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --update
 

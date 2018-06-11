@@ -81,8 +81,7 @@ RUN set -ex; \
 		nativescript \
 		@angular/cli \
 	; \
-	tns setup; \
-    apk del .build-deps
+	tns setup
 
 #RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | tns setup
 

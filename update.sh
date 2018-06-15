@@ -11,7 +11,7 @@ variants=(
 	alpine
 )
 
-nodeVersion=8.11.2
+nodeVersion=8.11.3
 androidVersion=4333796
 
 dockerRepo="monogramm/docker-ngxp"

@@ -94,4 +94,4 @@ RUN set -ex; \
 	node --version; \
 	npm --version; \
 	ng --version; \
-	tns doctor
+	tns info

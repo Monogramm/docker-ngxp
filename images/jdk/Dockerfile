@@ -2,12 +2,13 @@ FROM openjdk:jdk
 
 LABEL maintainer="mathieu.brunot at monogramm"
 
-ENV NODE_VERSION 8.11.2
+ENV NODE_VERSION 8.11.3
 ENV ANDROID_VERSION 4333796
 
+# Install the runtime libraries for the ia32/i386 architecture and G++ compiler
+# also create node group / user
 RUN set -ex; \
 	apt-get update -q; \
-	# Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 	apt-get install -y --no-install-recommends \
 		curl \
 		g++ \
@@ -17,32 +18,32 @@ RUN set -ex; \
 		python \
 		unzip \
 	; \
-	# create node group / user
 	groupadd --gid 1000 node; \
 	useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
+# download and extract android sdk
 RUN set -ex; \
-	# download and extract android sdk
 	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
 	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
 	rm -f android-sdk.zip; \
-	export ANDROID_HOME='/usr/local/android-sdk'; \
-	$ANDROID_HOME/tools/bin/sdkmanager \
+	export ANDROID_HOME='/usr/local/android-sdk'
+
+ENV ANDROID_HOME /usr/local/android-sdk
+ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
+
+# Accept android sdk licenses and install packages
+RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --licenses > /dev/null 2>&1
+RUN sdkmanager \
 		"tools" \
 		"platform-tools" \
 		"platforms;android-25" \
 		"build-tools;27.0.3" \
 		"extras;android;m2repository" \
-		"extras;google;m2repository"\
-	;
+		"extras;google;m2repository" \
+	> /dev/null 2>&1
 
-ENV ANDROID_HOME /usr/local/android-sdk
-ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
-
-RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --licenses
-
+# gpg keys listed at https://github.com/nodejs/node#release-team
 RUN set -ex; \
-	# gpg keys listed at https://github.com/nodejs/node#release-team
 	for key in \
 		94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
 		FD3A5288F042B6850C66B31F09FE44734EB7990E \
@@ -58,8 +59,8 @@ RUN set -ex; \
 		gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
 	done
 
+# Install the latest Node.js stable official release
 RUN set -ex; \
-	# Install the latest Node.js stable official release
 	ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 	&& case "${dpkgArch##*-}" in \
 		amd64) ARCH='x64';; \
@@ -78,16 +79,14 @@ RUN set -ex; \
 	&& rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
 	&& ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
+# Install the NativeScript and Angular CLI
 RUN set -ex; \
-	# Install the NativeScript and Angular CLI
 	npm install -g --unsafe-perm \
 		nativescript \
 		@angular/cli \
 	; \
 	tns setup; \
 	rm -rf /var/lib/apt/lists/*
-
-#RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | tns setup
 
 ENV GRADLE_USER_HOME /src/gradle
 VOLUME /src

@@ -12,15 +12,15 @@ branches:
 before_script:
   - env | sort
   - name="ngxp"
-  - image="monogramm/docker-ngxp:${VARIANT}"
+  - image="monogramm/docker-ngxp:${VARIANT}_travis"
   - dir="images/${VARIANT}"
 
 script:
-  - travis_retry docker build -t "$image" "$dir"
+  - travis_wait 50 docker build -t "$image" "$dir"
 
 after_script:
   - docker images
-  - docker run --name "$name" -d "$image" "$dir"
+  - docker run --name "$name" "$image"
   - docker ps
   - docker logs "$name"
 

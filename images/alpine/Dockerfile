@@ -27,16 +27,7 @@ RUN set -ex; \
 	# download and extract android sdk
 	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
 	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
-	rm -f android-sdk.zip; \
-	export ANDROID_HOME='/usr/local/android-sdk'; \
-	$ANDROID_HOME/tools/bin/sdkmanager \
-		"tools" \
-		"platform-tools" \
-		"platforms;android-25" \
-		"build-tools;27.0.3" \
-		"extras;android;m2repository" \
-		"extras;google;m2repository"\
-	;
+	rm -f android-sdk.zip
 
 ENV ANDROID_HOME /usr/local/android-sdk
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
@@ -48,7 +39,7 @@ RUN sdkmanager \
 		"platforms;android-25" \
 		"build-tools;27.0.3" \
 		"extras;android;m2repository" \
-		"extras;google;m2repository"\
+		"extras;google;m2repository" \
 	;
 
 RUN set -ex; \

@@ -39,7 +39,7 @@ RUN sdkmanager \
 		"build-tools;27.0.3" \
 		"extras;android;m2repository" \
 		"extras;google;m2repository" \
-	;
+	> /dev/null 2>&1 ;
 
 RUN set -ex; \
 	# gpg keys listed at https://github.com/nodejs/node#release-team

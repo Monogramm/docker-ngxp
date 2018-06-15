@@ -41,8 +41,8 @@ RUN set -ex; \
 ENV ANDROID_HOME /usr/local/android-sdk
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
 
-RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --licenses; \
-	sdkmanager \
+RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --licenses
+RUN sdkmanager \
 		"tools" \
 		"platform-tools" \
 		"platforms;android-25" \

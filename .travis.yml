@@ -16,7 +16,7 @@ before_script:
   - dir="images/${VARIANT}"
 
 script:
-  - travis_wait 40 docker build -t "$image" "$dir"
+  - travis_wait 50 docker build -t "$image" "$dir"
 
 after_script:
   - docker images

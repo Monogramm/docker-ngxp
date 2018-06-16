@@ -88,6 +88,7 @@ RUN set -ex; \
 	tns setup; \
 	rm -rf /var/lib/apt/lists/*
 
+USER node
 ENV GRADLE_USER_HOME /src/gradle
 VOLUME /src
 WORKDIR /src

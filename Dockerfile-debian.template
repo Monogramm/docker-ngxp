@@ -21,6 +21,8 @@ RUN set -ex; \
 	groupadd --gid 1000 node; \
 	useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
+USER node
+
 # download and extract android sdk
 RUN set -ex; \
 	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \

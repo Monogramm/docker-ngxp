@@ -90,8 +90,10 @@ WORKDIR /src
 # Verify install
 RUN set -ex; \
 	java -version; \
-	sdkmanager --version; \
+	sdkmanager --list; \
 	node --version; \
 	npm --version; \
 	ng --version; \
 	tns info
+
+CMD [ "node" ]

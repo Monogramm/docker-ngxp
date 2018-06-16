@@ -21,8 +21,6 @@ RUN set -ex; \
 	groupadd --gid 1000 node; \
 	useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-USER node
-
 # download and extract android sdk
 RUN set -ex; \
 	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
@@ -90,7 +88,6 @@ RUN set -ex; \
 	tns setup; \
 	rm -rf /var/lib/apt/lists/*
 
-USER node
 ENV GRADLE_USER_HOME /src/gradle
 VOLUME /src
 WORKDIR /src
@@ -98,8 +95,10 @@ WORKDIR /src
 # Verify install
 RUN set -ex; \
 	java -version; \
-	sdkmanager --version; \
+	sdkmanager --list; \
 	node --version; \
 	npm --version; \
 	ng --version; \
 	tns doctor
+
+CMD [ "node" ]

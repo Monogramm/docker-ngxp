@@ -20,15 +20,15 @@ script:
 
 after_script:
   - docker images
-  - travis_retry docker run --name "$name" -d "$image" "$dir"
+  - docker run --name "$name" -d "$image"
   - docker ps
   - docker logs "$name"
-	- docker exec --name "$name" -d "$image" "$dir" java -version
-	- docker exec --name "$name" -d "$image" "$dir" sdkmanager --list
-	- docker exec --name "$name" -d "$image" "$dir" node --version
-	- docker exec --name "$name" -d "$image" "$dir" npm --version
-	- docker exec --name "$name" -d "$image" "$dir" ng --version
-	- docker exec --name "$name" -d "$image" "$dir" tns info
+	- docker exec -d "$image" java -version
+	- docker exec -d "$image" sdkmanager --list
+	- docker exec -d "$image" node --version
+	- docker exec -d "$image" npm --version
+	- docker exec -d "$image" ng --version
+	- docker exec -d "$image" tns info
 
 notifications:
   email: false

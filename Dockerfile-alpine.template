@@ -87,13 +87,14 @@ ENV GRADLE_USER_HOME /src/gradle
 VOLUME /src
 WORKDIR /src
 
-# Verify install
+# Install SDK build tools
 RUN set -ex; \
-	java -version; \
-	sdkmanager --list; \
-	node --version; \
-	npm --version; \
-	ng --version; \
-	tns info
+	sdkmanager \
+		"tools" \
+		"platform-tools" \
+		"platforms;android-26" \
+		"build-tools;26.0.3" \
+		"extras;android;m2repository" \
+		"extras;google;m2repository"
 
 CMD [ "node" ]

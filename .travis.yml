@@ -17,10 +17,10 @@ before_script:
 
 script:
   - travis_wait 50 docker build -t "$image" "$dir"
+  - docker images
+  - travis_retry docker run --name "$name" -d "$image" "$dir"
 
 after_script:
-  - docker images
-  - docker run --name "$name" "$image"
   - docker ps
   - docker logs "$name"
 

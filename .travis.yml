@@ -20,9 +20,15 @@ script:
 
 after_script:
   - docker images
-  - docker run --name "$name" "$image"
+  - docker run --name "$name" -d "$image"
   - docker ps
   - docker logs "$name"
+	- docker exec -d "$image" java -version
+	- docker exec -d "$image" sdkmanager --list
+	- docker exec -d "$image" node --version
+	- docker exec -d "$image" npm --version
+	- docker exec -d "$image" ng --version
+	- docker exec -d "$image" tns info
 
 notifications:
   email: false

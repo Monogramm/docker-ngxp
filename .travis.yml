@@ -17,12 +17,18 @@ before_script:
 
 script:
   - travis_wait 50 docker build -t "$image" "$dir"
-  - docker images
-  - travis_retry docker run --name "$name" -d "$image" "$dir"
 
 after_script:
+  - docker images
+  - travis_retry docker run --name "$name" -d "$image" "$dir"
   - docker ps
   - docker logs "$name"
+	- docker exec --name "$name" -d "$image" "$dir" java -version
+	- docker exec --name "$name" -d "$image" "$dir" sdkmanager --list
+	- docker exec --name "$name" -d "$image" "$dir" node --version
+	- docker exec --name "$name" -d "$image" "$dir" npm --version
+	- docker exec --name "$name" -d "$image" "$dir" ng --version
+	- docker exec --name "$name" -d "$image" "$dir" tns info
 
 notifications:
   email: false

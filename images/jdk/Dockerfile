@@ -1,9 +1,9 @@
 FROM openjdk:jdk
 
-LABEL maintainer="mathieu.brunot at monogramm"
+LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>"
 
-ENV NODE_VERSION 8.11.3
-ENV ANDROID_VERSION 4333796
+ARG NODE_VERSION=12.16.2
+ARG ANDROID_VERSION=4333796
 
 # Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 # also create node group / user
@@ -88,7 +88,7 @@ RUN set -ex; \
 	tns setup; \
 	rm -rf /var/lib/apt/lists/*
 
-ENV GRADLE_USER_HOME /src/gradle
+ENV GRADLE_USER_HOME=/src/gradle
 VOLUME /src
 WORKDIR /src
 

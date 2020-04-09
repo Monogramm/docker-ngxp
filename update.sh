@@ -11,7 +11,9 @@ variants=(
 	alpine
 )
 
-nodeVersion=8.11.3
+# TODO Retrieve latest LTS version dynamically
+nodeVersion=12.16.2
+# TODO Retrieve latest version dynamically
 androidVersion=4333796
 
 dockerRepo="monogramm/docker-ngxp"
@@ -30,7 +32,7 @@ for variant in "${variants[@]}"; do
 	dir="images/$variant"
 	mkdir -p "$dir"
 
-	template="Dockerfile-${base[$variant]}.template"
+	template="Dockerfile.${base[$variant]}.template"
 	cp "$template" "$dir/Dockerfile"
 
 	# Replace the variables.

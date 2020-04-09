@@ -1,28 +1,33 @@
+os: linux
 dist: trusty
-sudo: required
 
 services: docker
 
-language: bash
+language: shell
 
 branches:
   only:
     - master
 
-before_script:
+before_install:
   - env | sort
-  - name="ngxp"
-  - image="monogramm/docker-ngxp:${VARIANT}_travis"
-  - dir="images/${VARIANT}"
+  - export DOCKER_REPO="monogramm/docker-ngxp"
+  - export IMAGE_NAME="${DOCKER_REPO}:${VARIANT}_travis"
+  - export home=$(pwd)
+  - export travis_dir="${home}/images/${VARIANT}"
+
+install:
+  # Test container build
+  - travis_wait 50 docker build -t "${IMAGE_NAME}" "$travis_dir"
+
+before_script:
+  - docker images
 
 script:
-  - travis_wait 50 docker build -t "$image" "$dir"
-
-after_script:
-  - docker images
-  - docker run --name "$name" -d "$image"
+  # Test container run
+  - docker run --name "${DOCKER_REPO}" -d "${IMAGE_NAME}"
   - docker ps
-  - docker logs "$name"
+  - docker logs "${DOCKER_REPO}"
 	- docker exec -d "$image" java -version
 	- docker exec -d "$image" sdkmanager --list
 	- docker exec -d "$image" node --version

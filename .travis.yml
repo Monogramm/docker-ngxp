@@ -29,12 +29,12 @@ script:
   - docker run --name "${DOCKER_REPO}" -d "${IMAGE_NAME}"
   - docker ps
   - docker logs "${DOCKER_REPO}"
-	- docker exec -d "$image" java -version
-	- docker exec -d "$image" sdkmanager --list
-	- docker exec -d "$image" node --version
-	- docker exec -d "$image" npm --version
-	- docker exec -d "$image" ng --version
-	- docker exec -d "$image" tns info
+  - docker exec -d "${IMAGE_NAME}" java -version
+  - docker exec -d "${IMAGE_NAME}" sdkmanager --list
+  - docker exec -d "${IMAGE_NAME}" node --version
+  - docker exec -d "${IMAGE_NAME}" npm --version
+  - docker exec -d "${IMAGE_NAME}" ng --version
+  - docker exec -d "${IMAGE_NAME}" tns info
 
 notifications:
   email: false

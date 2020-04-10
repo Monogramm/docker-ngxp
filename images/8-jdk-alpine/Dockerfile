@@ -20,7 +20,7 @@ RUN set -ex; \
 	addgroup -g 1000 node; \
 	adduser -u 1000 -G node -s /bin/sh -D node
 
-# gpg keys listed at https://github.com/nodejs/node#release-team
+# gpg keys listed at https://github.com/nodejs/node#release-keys
 RUN set -ex; \
 	for key in \
 		4ED778F539E3634C779C87C6D7062848A1AB005C \

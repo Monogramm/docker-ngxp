@@ -18,7 +18,7 @@ RUN set -ex; \
 	groupadd --gid 1000 node; \
 	useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-# gpg keys listed at https://github.com/nodejs/node#release-team
+# gpg keys listed at https://github.com/nodejs/node#release-keys
 RUN set -ex; \
 	for key in \
 		4ED778F539E3634C779C87C6D7062848A1AB005C \
@@ -53,7 +53,7 @@ RUN set -ex; \
 	&& curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
 	&& gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
 	&& grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-	&& tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+	&& tar -xf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
 	&& rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
 	&& ln -s /usr/local/bin/node /usr/local/bin/nodejs
 

@@ -1,4 +1,4 @@
-FROM openjdk:jdk
+FROM openjdk:8-jdk-slim
 
 LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>"
 

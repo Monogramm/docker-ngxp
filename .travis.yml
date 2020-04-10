@@ -38,6 +38,11 @@ script:
 notifications:
   email: false
 
+jobs:
+  allow_failures:
+    - env: VARIANT=11-jdk-slim
+
 env: # Environments
-    - VARIANT=alpine
-    - VARIANT=jdk
+    - VARIANT=11-jdk-slim
+    - VARIANT=8-jdk-alpine
+    - VARIANT=8-jdk-slim

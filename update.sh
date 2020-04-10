@@ -2,13 +2,15 @@
 set -eo pipefail
 
 declare -A base=(
-	[jdk]='debian'
-	[alpine]='alpine'
+	[8-jdk-slim]='debian'
+	[8-jdk-alpine]='alpine'
+	[11-jdk-slim]='debian'
 )
 
 variants=(
-	jdk
-	alpine
+	8-jdk-slim
+	8-jdk-alpine
+	11-jdk-slim
 )
 
 # TODO Retrieve latest LTS version dynamically
@@ -20,7 +22,8 @@ dockerRepo="monogramm/docker-ngxp"
 
 # Remove existing images
 echo "reset docker images"
-find ./images -maxdepth 1 -type d -regextype sed -regex '\./images/\.*' -exec rm -r '{}' \;
+#find ./images -maxdepth 1 -type d -regextype sed -regex '\./images/\.*' -exec rm -r '{}' \;
+rm -rf ./images/*
 
 echo "update docker images"
 travisEnv=

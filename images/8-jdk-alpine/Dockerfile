@@ -1,4 +1,4 @@
-FROM openjdk:alpine
+FROM openjdk:8-jdk-alpine
 
 LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>"
 

@@ -2,9 +2,6 @@ FROM openjdk:%%VARIANT%%
 
 LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>"
 
-ARG NODE_VERSION=%%NODE_VERSION%%
-ARG ANDROID_VERSION=%%ANDROID_VERSION%%
-
 # Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 # also create node group / user
 RUN set -ex; \
@@ -22,26 +19,6 @@ RUN set -ex; \
 	; \
 	addgroup -g 1000 node; \
 	adduser -u 1000 -G node -s /bin/sh -D node
-
-# download and extract android sdk
-RUN set -ex; \
-	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
-	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
-	rm -f android-sdk.zip
-
-ENV ANDROID_HOME /usr/local/android-sdk
-ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
-
-# Accept android sdk licenses and install packages
-RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --licenses > /dev/null 2>&1
-RUN sdkmanager \
-		"tools" \
-		"platform-tools" \
-		"platforms;android-25" \
-		"build-tools;27.0.3" \
-		"extras;android;m2repository" \
-		"extras;google;m2repository" \
-	> /dev/null 2>&1
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
 RUN set -ex; \
@@ -61,6 +38,8 @@ RUN set -ex; \
 	done
 
 # Install the latest Node.js stable official release
+ARG NODE_VERSION=%%NODE_VERSION%%
+
 RUN set -ex; \
     curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz"; \
     curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"; \
@@ -75,11 +54,33 @@ RUN set -ex; \
     rm -Rf "node-v$NODE_VERSION"; \
     rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
+# download and extract android sdk
+ARG ANDROID_VERSION=%%ANDROID_VERSION%%
+
+RUN set -ex; \
+	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
+	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
+	rm -f android-sdk.zip
+
+ENV ANDROID_HOME /usr/local/android-sdk
+ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
+
+# Accept android sdk licenses and install packages
+RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --licenses > /dev/null 2>&1
+RUN sdkmanager \
+		"tools" \
+		"platform-tools" \
+		"platforms;android-25" \
+		"build-tools;27.0.3" \
+		"extras;android;m2repository" \
+		"extras;google;m2repository" \
+	> /dev/null 2>&1
+
 # Install the NativeScript and Angular CLI
 RUN set -ex; \
 	npm install -g --unsafe-perm \
-		nativescript \
 		@angular/cli \
+		nativescript \
 	; \
 	tns setup
 

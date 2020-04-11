@@ -5,6 +5,9 @@ LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>"
 # Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 # also create node group / user
 RUN set -ex; \
+	\
+	java -version; \
+	\
 	apk add --no-cache \
 		curl \
 		g++ \
@@ -52,7 +55,9 @@ RUN set -ex; \
     make install; \
     cd .. ; \
     rm -Rf "node-v$NODE_VERSION"; \
-    rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
+    rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt; \
+	node --version; \
+	npm --version
 
 # download and extract android sdk
 ARG ANDROID_VERSION=%%ANDROID_VERSION%%
@@ -74,7 +79,9 @@ RUN sdkmanager \
 		"build-tools;27.0.3" \
 		"extras;android;m2repository" \
 		"extras;google;m2repository" \
-	> /dev/null 2>&1
+	> /dev/null 2>&1 ; \
+	\
+	sdkmanager --list
 
 # Install the NativeScript and Angular CLI
 RUN set -ex; \
@@ -82,7 +89,13 @@ RUN set -ex; \
 		@angular/cli \
 		nativescript \
 	; \
-	tns setup
+	\
+	ng --version; \
+	\
+	tns setup; \
+	\
+	tns --version; \
+	tns info
 
 ENV GRADLE_USER_HOME=/src/gradle
 VOLUME /src

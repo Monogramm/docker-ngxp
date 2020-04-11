@@ -5,6 +5,9 @@ LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>"
 # Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 # also create node group / user
 RUN set -ex; \
+	\
+	java -version; \
+	\
 	apt-get update -q; \
 	apt-get install -y --no-install-recommends \
 		curl \
@@ -55,7 +58,9 @@ RUN set -ex; \
 	&& grep " node-v$NODE_VERSION-linux-$ARCH.tar.gz\$" SHASUMS256.txt | sha256sum -c - \
 	&& tar -xzf "node-v$NODE_VERSION-linux-$ARCH.tar.gz" -C /usr/local --strip-components=1 --no-same-owner \
 	&& rm "node-v$NODE_VERSION-linux-$ARCH.tar.gz" SHASUMS256.txt.asc SHASUMS256.txt \
-	&& ln -s /usr/local/bin/node /usr/local/bin/nodejs
+	&& ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+	&& node --version \
+	&& npm --version
 
 # download and extract android sdk
 ARG ANDROID_VERSION=4333796
@@ -78,7 +83,9 @@ RUN sdkmanager \
 		"build-tools;27.0.3" \
 		"extras;android;m2repository" \
 		"extras;google;m2repository" \
-	> /dev/null 2>&1
+	> /dev/null 2>&1 ; \
+	\
+	sdkmanager --list
 
 # Install the NativeScript and Angular CLI
 RUN set -ex; \
@@ -86,7 +93,14 @@ RUN set -ex; \
 		@angular/cli \
 		nativescript \
 	; \
+	\
+	ng --version; \
+	\
 	tns setup; \
+	\
+	tns --version; \
+	tns info; \
+	\
 	rm -rf /var/lib/apt/lists/*
 
 ENV GRADLE_USER_HOME=/src/gradle

@@ -19,7 +19,7 @@ before_install:
 
 install:
   # Test container build
-  - travis_wait 120 docker build -t "${IMAGE_NAME}" "$travis_dir"
+  - docker build -t "${IMAGE_NAME}" "$travis_dir"
 
 before_script:
   - docker images
@@ -35,6 +35,7 @@ notifications:
 
 jobs:
   allow_failures:
+    - env: VARIANT=8-jdk-alpine
     - env: VARIANT=11-jdk-slim
 
 env: # Environments

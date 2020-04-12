@@ -79,8 +79,8 @@ RUN ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | sdkmanager --licenses
 RUN sdkmanager \
 		"tools" \
 		"platform-tools" \
-		"platforms;android-25" \
-		"build-tools;27.0.3" \
+		"platforms;android-28" \
+		"build-tools;28.0.3" \
 		"extras;android;m2repository" \
 		"extras;google;m2repository" \
 	> /dev/null 2>&1 ; \
@@ -112,9 +112,10 @@ RUN set -ex; \
 	sdkmanager \
 		"tools" \
 		"platform-tools" \
-		"platforms;android-26" \
-		"build-tools;26.0.3" \
+		"platforms;android-28" \
+		"build-tools;28.0.3" \
 		"extras;android;m2repository" \
-		"extras;google;m2repository"
+		"extras;google;m2repository" \
+	;
 
 CMD [ "node" ]

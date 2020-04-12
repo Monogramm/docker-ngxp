@@ -18,7 +18,6 @@ A starter project to create web apps and NativeScript applications using NativeS
 <https://hub.docker.com/r/monogramm/docker-ngxp/>
 
 -   `jdk`, `latest`
--   `alpine`
 
 ## How to run this image ?
 

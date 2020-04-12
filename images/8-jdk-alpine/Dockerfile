@@ -1,13 +1,13 @@
-FROM openjdk:alpine
+FROM openjdk:8-jdk-alpine
 
-LABEL maintainer="mathieu.brunot at monogramm"
-
-ENV NODE_VERSION 8.11.3
-ENV ANDROID_VERSION 4333796
+LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>"
 
 # Install the runtime libraries for the ia32/i386 architecture and G++ compiler
 # also create node group / user
 RUN set -ex; \
+	\
+	java -version; \
+	\
 	apk add --no-cache \
 		curl \
 		g++ \
@@ -23,7 +23,45 @@ RUN set -ex; \
 	addgroup -g 1000 node; \
 	adduser -u 1000 -G node -s /bin/sh -D node
 
+# gpg keys listed at https://github.com/nodejs/node#release-keys
+RUN set -ex; \
+	for key in \
+		4ED778F539E3634C779C87C6D7062848A1AB005C \
+		94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+		71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+		8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+		C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+		DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
+		A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
+		B9E2F5981AA6E0CD28160D9FF13993A75599653C \
+	; do \
+		gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+		gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+		gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+	done
+
+# Install the latest Node.js stable official release
+ARG NODE_VERSION=12.16.2
+
+RUN set -ex; \
+    curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz"; \
+    curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"; \
+    gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc; \
+    grep " node-v$NODE_VERSION.tar.xz\$" SHASUMS256.txt | sha256sum -c - ; \
+    tar -xf "node-v$NODE_VERSION.tar.xz"; \
+    cd "node-v$NODE_VERSION"; \
+    ./configure; \
+    make -j$(getconf _NPROCESSORS_ONLN); \
+    make install; \
+    cd .. ; \
+    rm -Rf "node-v$NODE_VERSION"; \
+    rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt; \
+	node --version; \
+	npm --version
+
 # download and extract android sdk
+ARG ANDROID_VERSION=4333796
+
 RUN set -ex; \
 	curl -sL https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_VERSION.zip -o android-sdk.zip; \
 	unzip -q android-sdk.zip -d /usr/local/android-sdk ; \
@@ -41,49 +79,25 @@ RUN sdkmanager \
 		"build-tools;27.0.3" \
 		"extras;android;m2repository" \
 		"extras;google;m2repository" \
-	> /dev/null 2>&1
-
-# gpg keys listed at https://github.com/nodejs/node#release-team
-RUN set -ex; \
-	for key in \
-		94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-		FD3A5288F042B6850C66B31F09FE44734EB7990E \
-		71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-		DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-		C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-		B9AE9905FFD7803F25714661B63B535A4C206CA9 \
-		56730D5401028683275BD23C23EFEFE93C4CFFFE \
-		77984A986EBC2AA786BC0F66B01FBB92821C587A \
-	; do \
-		gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
-		gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-		gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
-	done
-
-# Install the latest Node.js stable official release
-RUN set -ex; \
-    curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz"; \
-    curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"; \
-    gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc; \
-    grep " node-v$NODE_VERSION.tar.xz\$" SHASUMS256.txt | sha256sum -c - ; \
-    tar -xf "node-v$NODE_VERSION.tar.xz"; \
-    cd "node-v$NODE_VERSION"; \
-    ./configure; \
-    make -j$(getconf _NPROCESSORS_ONLN); \
-    make install; \
-    cd .. ; \
-    rm -Rf "node-v$NODE_VERSION"; \
-    rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
+	> /dev/null 2>&1 ; \
+	\
+	sdkmanager --list
 
 # Install the NativeScript and Angular CLI
 RUN set -ex; \
 	npm install -g --unsafe-perm \
-		nativescript \
 		@angular/cli \
+		nativescript \
 	; \
-	tns setup
+	\
+	ng --version; \
+	\
+	tns setup; \
+	\
+	tns --version; \
+	tns info
 
-ENV GRADLE_USER_HOME /src/gradle
+ENV GRADLE_USER_HOME=/src/gradle
 VOLUME /src
 WORKDIR /src
 

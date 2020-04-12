@@ -2,23 +2,28 @@
 set -eo pipefail
 
 declare -A base=(
-	[jdk]='debian'
-	[alpine]='alpine'
+	[8-jdk-slim]='debian'
+	[8-jdk-alpine]='alpine'
+	[11-jdk-slim]='debian'
 )
 
 variants=(
-	jdk
-	alpine
+	8-jdk-slim
+	8-jdk-alpine
+	11-jdk-slim
 )
 
-nodeVersion=8.11.3
+# TODO Retrieve latest LTS version dynamically
+nodeVersion=12.16.2
+# TODO Retrieve latest version dynamically
 androidVersion=4333796
 
 dockerRepo="monogramm/docker-ngxp"
 
 # Remove existing images
 echo "reset docker images"
-find ./images -maxdepth 1 -type d -regextype sed -regex '\./images/\.*' -exec rm -r '{}' \;
+#find ./images -maxdepth 1 -type d -regextype sed -regex '\./images/\.*' -exec rm -r '{}' \;
+rm -rf ./images/*
 
 echo "update docker images"
 travisEnv=
@@ -30,7 +35,7 @@ for variant in "${variants[@]}"; do
 	dir="images/$variant"
 	mkdir -p "$dir"
 
-	template="Dockerfile-${base[$variant]}.template"
+	template="Dockerfile.${base[$variant]}.template"
 	cp "$template" "$dir/Dockerfile"
 
 	# Replace the variables.
